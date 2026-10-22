@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Family Grocery List</title>
+<style>
+:root{color-scheme:light;--bg:#f1f5f0;--surface:#fff;--ink:#17261d;--muted:#5f7366;--line:#d6dfd6;--accent:#2e6b4c;--accentInk:#fff;--warn:#b3412e}*{box-sizing:border-box}body{margin:0;padding:26px 16px 48px;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:560px;margin:auto}header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:18px}h1{font-size:32px;line-height:1.1;margin:0;letter-spacing:-.03em}h2{font-size:17px}#count{margin:0;color:var(--muted);font-size:14px;white-space:nowrap}form#add{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-bottom:20px}input,select,button{font:inherit}input[type=text],select{min-width:0;width:100%;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}button{cursor:pointer}.add,.primary{border:0;border-radius:10px;padding:11px 20px;background:var(--accent);color:var(--accentInk);font-weight:650}.store-select{grid-column:1/-1}#groups{display:grid;gap:16px}.store{background:var(--surface);border:1.5px solid var(--line);border-radius:12px;overflow:hidden}.store h2{margin:0;padding:12px 14px;font-size:17px;border-bottom:1px solid var(--line);background:rgba(46,107,76,.07)}ul{list-style:none;margin:0;padding:0}li{display:flex;align-items:stretch;border-bottom:1px solid var(--line)}li:last-child{border-bottom:0}.item-toggle{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:13px 8px 13px 14px;border:0;background:none;color:inherit;text-align:left}.check{flex:none;width:23px;height:23px;border:2px solid var(--muted);border-radius:7px;display:grid;place-items:center}.check:after{content:"✓";font-size:16px;font-weight:800;line-height:1;color:white;display:none}li.done .check{background:var(--accent);border-color:var(--accent)}li.done .check:after{display:block}.item-text{overflow-wrap:anywhere}li.done .item-text{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1.5px}.remove{width:46px;flex:none;border:0;background:none;color:var(--muted);font-size:23px}.remove:hover{color:var(--warn)}#empty{text-align:center;color:var(--muted);padding:32px 14px;border:1.5px dashed var(--line);border-radius:12px}footer{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}#status{font-size:13px;color:var(--muted);margin:0}.clear{font-size:14px;color:var(--accent);background:none;border:1.5px solid var(--line);border-radius:8px;padding:8px 12px}.clear[hidden]{display:none}#share-note{font-size:13px;color:var(--muted);margin-top:18px;line-height:1.5}.panel{background:white;border:1.5px solid var(--line);border-radius:14px;padding:20px;margin:24px 0}.panel p{color:var(--muted)}.hidden{display:none!important}.account{font-size:13px;color:var(--muted);overflow-wrap:anywhere;margin:0 0 14px}.secondary{background:white;border:1.5px solid var(--line);border-radius:9px;padding:9px 12px;color:var(--ink)}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body><main>
+<header><h1>Grocery List</h1><p id="count" aria-live="polite"></p></header>
+<section id="loginPanel" class="panel">
+  <h2>Our shared grocery list</h2>
+  <p>Sign in with the Google account that was allowed in the Firebase security rules. Your list will sync between both phones.</p>
+  <button id="signIn" class="primary" type="button">Sign in with Google</button>
+  <p id="loginStatus" role="status" aria-live="polite"></p>
+</section>
+<section id="appPanel" class="hidden">
+  <p id="account" class="account"></p>
+  <form id="add" autocomplete="off"><input id="newItem" type="text" placeholder="Add an item (e.g. milk)" aria-label="Grocery item" maxlength="120" required><button class="add" type="submit">Add</button><select id="store" class="store-select" aria-label="Choose store"><option>No Frills</option><option>Costco</option><option>Walmart</option><option>Farm Boy</option><option>Other</option></select></form>
+  <div id="groups"></div><p id="empty" hidden><strong>Nothing on the list yet.</strong><br>Add your first grocery item above.</p>
+  <footer><p id="status" role="status" aria-live="polite">Connecting to shared list…</p><button class="clear" id="clear" type="button" hidden>Delete checked items</button></footer>
+  <p id="share-note">Changes sync online for the two Google accounts allowed in your Firestore rules. Checked items move to the bottom; use “Delete checked items” when you want to remove them.</p>
+  <button id="signOut" class="secondary" type="button">Sign out</button>
+</section>
+</main>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, writeBatch } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD5HrofJvPdHH_69JUpI43xJEJeh93iOpo",
+  authDomain: "grocery-list-pksmn.firebaseapp.com",
+  projectId: "grocery-list-pksmn",
+  storageBucket: "grocery-list-pksmn.firebasestorage.app",
+  messagingSenderId: "754537311698",
+  appId: "1:754537311698:web:a2db5c77e97cb97910ac0b"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+const stores = ['No Frills','Costco','Walmart','Farm Boy','Other'];
+const $ = id => document.getElementById(id);
+let items = [];
+let unsubscribeItems = null;
+let currentUser = null;
+let busy = false;
+
+function status(message){ $('status').textContent = message; }
+function sortedForStore(store){ return items.filter(i=>i.store===store).sort((a,b)=>Number(a.done)-Number(b.done)||(a.done?(Number(b.doneAt||0)-Number(a.doneAt||0)):(Number(a.createdAt||0)-Number(b.createdAt||0)))); }
+function render(){
+  const groups=$('groups'); groups.replaceChildren(); let openCount=0, doneCount=0;
+  stores.forEach(store=>{
+    const listItems=sortedForStore(store); if(!listItems.length)return;
+    const section=document.createElement('section'); section.className='store';
+    const heading=document.createElement('h2'); heading.textContent=store;
+    const ul=document.createElement('ul');
+    listItems.forEach(item=>{
+      if(item.done)doneCount++;else openCount++;
+      const li=document.createElement('li'); if(item.done)li.className='done';
+      const toggle=document.createElement('button'); toggle.type='button'; toggle.className='item-toggle'; toggle.setAttribute('role','checkbox'); toggle.setAttribute('aria-checked',String(item.done));
+      const check=document.createElement('span'); check.className='check'; check.setAttribute('aria-hidden','true');
+      const label=document.createElement('span'); label.className='item-text'; label.textContent=item.text;
+      toggle.append(check,label); toggle.addEventListener('click',async()=>{ try { status('Saving…'); await updateDoc(doc(db,'items',item.id),{done:!item.done,doneAt:!item.done?Date.now():0,updatedAt:Date.now()}); } catch(e){ status('Could not update item: '+friendlyError(e)); } });
+      const remove=document.createElement('button'); remove.type='button'; remove.className='remove'; remove.textContent='×'; remove.setAttribute('aria-label','Remove '+item.text); remove.addEventListener('click',async()=>{try{status('Removing item…');await deleteDoc(doc(db,'items',item.id));}catch(e){status('Could not remove item: '+friendlyError(e));}});
+      li.append(toggle,remove); ul.append(li);
+    });
+    section.append(heading,ul); groups.append(section);
+  });
+  $('empty').hidden=items.length!==0;
+  $('count').textContent=items.length?openCount+' to get'+(doneCount?' · '+doneCount+' checked':''):'';
+  $('clear').hidden=doneCount===0;
+}
+function friendlyError(e){
+  if(e?.code==='permission-denied')return 'Access denied. Check that this Google email is listed in your Firestore rules and that the rules are published.';
+  if(e?.code==='unavailable')return 'Firebase is temporarily unavailable. Check your internet connection.';
+  if(e?.code==='auth/unauthorized-domain')return 'This website domain is not authorized in Firebase Authentication settings.';
+  if(e?.code==='auth/popup-blocked')return 'The sign-in popup was blocked. Allow pop-ups for this site and try again.';
+  return e?.message || 'Please try again.';
+}
+$('signIn').addEventListener('click',async()=>{
+  $('loginStatus').textContent='Opening Google sign-in…'; $('signIn').disabled=true;
+  try{await signInWithPopup(auth,provider);$('loginStatus').textContent='';}
+  catch(e){$('loginStatus').textContent=friendlyError(e);}
+  finally{$('signIn').disabled=false;}
+});
+$('signOut').addEventListener('click',async()=>{try{await signOut(auth);}catch(e){status(friendlyError(e));}});
+$('add').addEventListener('submit',async e=>{
+  e.preventDefault(); const input=$('newItem'); const text=input.value.trim(); if(!text||!currentUser||busy)return;
+  busy=true; const button=$('add').querySelector('button[type="submit"]'); button.disabled=true;
+  try{await addDoc(collection(db,'items'),{text,store:stores.includes($('store').value)?$('store').value:'Other',done:false,createdAt:Date.now(),doneAt:0,createdBy:currentUser.uid});input.value='';input.focus();status('Added to shared list.');}
+  catch(e){status('Could not add item: '+friendlyError(e));}
+  finally{busy=false;button.disabled=false;}
+});
+$('clear').addEventListener('click',async()=>{
+  const checked=items.filter(i=>i.done); if(!checked.length)return;
+  if(!confirm('Delete all '+checked.length+' checked item(s)? Choose Cancel to keep them crossed out at the bottom.'))return;
+  try{status('Deleting checked items…');const batch=writeBatch(db);checked.forEach(item=>batch.delete(doc(db,'items',item.id)));await batch.commit();status('Checked items deleted.');}
+  catch(e){status('Could not delete checked items: '+friendlyError(e));}
+});
+onAuthStateChanged(auth,user=>{
+  currentUser=user;
+  if(unsubscribeItems){unsubscribeItems();unsubscribeItems=null;}
+  if(!user){$('loginPanel').classList.remove('hidden');$('appPanel').classList.add('hidden');$('loginStatus').textContent='';items=[];render();return;}
+  $('loginPanel').classList.add('hidden');$('appPanel').classList.remove('hidden');$('account').textContent='Signed in as '+(user.email||'Google account');
+  if(!user.emailVerified){status('This account email is not verified.');return;}
+  status('Connecting to shared list…');
+  unsubscribeItems=onSnapshot(query(collection(db,'items')),
+    snap=>{items=snap.docs.map(d=>({id:d.id,...d.data()})).filter(i=>typeof i.text==='string').map(i=>({...i,store:stores.includes(i.store)?i.store:'Other',done:!!i.done}));render();status('Synced · changes are shared.');},
+    error=>{status('Could not load shared list: '+friendlyError(error));}
+  );
+});
+</script>
+</body></html>

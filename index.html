@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Family Grocery List</title>
 <style>
-:root{color-scheme:light;--bg:#f1f5f0;--surface:#fff;--ink:#17261d;--muted:#5f7366;--line:#d6dfd6;--accent:#2e6b4c;--accentInk:#fff;--warn:#b3412e}*{box-sizing:border-box}body{margin:0;padding:26px 16px 48px;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:560px;margin:auto}header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:18px}h1{font-size:32px;line-height:1.1;margin:0;letter-spacing:-.03em}h2{font-size:17px}#count{margin:0;color:var(--muted);font-size:14px;white-space:nowrap}form#add{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-bottom:20px}input,select,button{font:inherit}input[type=text],select{min-width:0;width:100%;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}button{cursor:pointer}.add,.primary{border:0;border-radius:10px;padding:11px 20px;background:var(--accent);color:var(--accentInk);font-weight:650}.store-select{grid-column:1/-1}#groups{display:grid;gap:16px}.store{background:var(--surface);border:1.5px solid var(--line);border-radius:12px;overflow:hidden}.store h2{margin:0;padding:12px 14px;font-size:17px;border-bottom:1px solid var(--line);background:rgba(46,107,76,.07)}ul{list-style:none;margin:0;padding:0}li{display:flex;align-items:stretch;border-bottom:1px solid var(--line)}li:last-child{border-bottom:0}.item-toggle{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:13px 8px 13px 14px;border:0;background:none;color:inherit;text-align:left}.check{flex:none;width:23px;height:23px;border:2px solid var(--muted);border-radius:7px;display:grid;place-items:center}.check:after{content:"✓";font-size:16px;font-weight:800;line-height:1;color:white;display:none}li.done .check{background:var(--accent);border-color:var(--accent)}li.done .check:after{display:block}.item-text{overflow-wrap:anywhere}li.done .item-text{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1.5px}.remove{width:46px;flex:none;border:0;background:none;color:var(--muted);font-size:23px}.remove:hover{color:var(--warn)}#empty{text-align:center;color:var(--muted);padding:32px 14px;border:1.5px dashed var(--line);border-radius:12px}footer{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}#status{font-size:13px;color:var(--muted);margin:0}.clear{font-size:14px;color:var(--accent);background:none;border:1.5px solid var(--line);border-radius:8px;padding:8px 12px}.clear[hidden]{display:none}#share-note{font-size:13px;color:var(--muted);margin-top:18px;line-height:1.5}.panel{background:white;border:1.5px solid var(--line);border-radius:14px;padding:20px;margin:24px 0}.panel p{color:var(--muted)}.hidden{display:none!important}.account{font-size:13px;color:var(--muted);overflow-wrap:anywhere;margin:0 0 14px}.secondary{background:white;border:1.5px solid var(--line);border-radius:9px;padding:9px 12px;color:var(--ink)}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+:root{color-scheme:light;--bg:#f1f5f0;--surface:#fff;--ink:#17261d;--muted:#5f7366;--line:#d6dfd6;--accent:#2e6b4c;--accentInk:#fff;--warn:#b3412e}*{box-sizing:border-box}body{margin:0;padding:26px 16px 48px;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:560px;margin:auto}header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:18px}h1{font-size:32px;line-height:1.1;margin:0;letter-spacing:-.03em}h2{font-size:17px}#count{margin:0;color:var(--muted);font-size:14px;white-space:nowrap}form#add{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-bottom:20px}input,select,button{font:inherit}input[type=text],select{min-width:0;width:100%;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}button{cursor:pointer}.add,.primary{border:0;border-radius:10px;padding:11px 20px;background:var(--accent);color:var(--accentInk);font-weight:650}.store-select{grid-column:1/-1}#groups{display:grid;gap:16px}.store{background:var(--surface);border:1.5px solid var(--line);border-radius:12px;overflow:hidden}.store h2{margin:0;padding:12px 14px;font-size:17px;border-bottom:1px solid var(--line);background:rgba(46,107,76,.07)}ul{list-style:none;margin:0;padding:0}li{display:flex;align-items:stretch;border-bottom:1px solid var(--line)}li:last-child{border-bottom:0}.item-toggle{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:13px 8px 13px 14px;border:0;background:none;color:inherit;text-align:left}.check{flex:none;width:23px;height:23px;border:2px solid var(--muted);border-radius:7px;display:grid;place-items:center}.check:after{content:"✓";font-size:16px;font-weight:800;line-height:1;color:white;display:none}li.done .check{background:var(--accent);border-color:var(--accent)}li.done .check:after{display:block}.item-text{overflow-wrap:anywhere}li.done .item-text{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1.5px}.remove{width:46px;flex:none;border:0;background:none;color:var(--muted);font-size:23px}.remove:hover{color:var(--warn)}#empty{text-align:center;color:var(--muted);padding:32px 14px;border:1.5px dashed var(--line);border-radius:12px}footer{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}#status{font-size:13px;color:var(--muted);margin:0}.clear{font-size:14px;color:var(--accent);background:none;border:1.5px solid var(--line);border-radius:8px;padding:8px 12px}.clear[hidden]{display:none}#share-note{font-size:13px;color:var(--muted);margin-top:18px;line-height:1.5}.panel{background:white;border:1.5px solid var(--line);border-radius:14px;padding:20px;margin:24px 0}.panel p{color:var(--muted)}.hidden{display:none!important}.account{font-size:13px;color:var(--muted);overflow-wrap:anywhere;margin:0 0 14px}.secondary{background:white;border:1.5px solid var(--line);border-radius:9px;padding:9px 12px;color:var(--ink)}.manage{margin:18px 0 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;padding:14px}.manage summary{font-weight:650;cursor:pointer}.store-tools{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:12px}.store-list{display:grid;gap:8px;margin-top:12px}.store-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.store-row span{flex:1;min-width:100px}.store-row button{border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:white;color:var(--ink)}.store-row .danger{color:var(--warn)}.small-note{font-size:12px;color:var(--muted);margin:8px 0 0}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
 </head>
 <body><main>
@@ -18,6 +18,7 @@
 <section id="appPanel" class="hidden">
   <p id="account" class="account"></p>
   <form id="add" autocomplete="off"><input id="newItem" type="text" placeholder="Add an item (e.g. milk)" aria-label="Grocery item" maxlength="120" required><button class="add" type="submit">Add</button><select id="store" class="store-select" aria-label="Choose store"><option>No Frills</option><option>Costco</option><option>Walmart</option><option>Farm Boy</option><option>Other</option></select></form>
+  <details class="manage"><summary>Manage stores</summary><p class="small-note">Store changes sync for both approved Google accounts. Removing a store moves its existing items to Other.</p><form id="addStore" class="store-tools"><input id="newStore" type="text" placeholder="New store name" maxlength="40" aria-label="New store name" required><button class="add" type="submit">Add</button></form><div id="storeList" class="store-list"></div></details>
   <div id="groups"></div><p id="empty" hidden><strong>Nothing on the list yet.</strong><br>Add your first grocery item above.</p>
   <footer><p id="status" role="status" aria-live="polite">Connecting to shared list…</p><button class="clear" id="clear" type="button" hidden>Delete checked items</button></footer>
   <p id="share-note">Changes sync online for the two Google accounts allowed in your Firestore rules. Checked items move to the bottom; use “Delete checked items” when you want to remove them.</p>
@@ -27,7 +28,7 @@
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, writeBatch } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, writeBatch, setDoc } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyD5HrofJvPdHH_69JUpI43xJEJeh93iOpo",
@@ -41,7 +42,10 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
-const stores = ['No Frills','Costco','Walmart','Farm Boy','Other'];
+const DEFAULT_STORES = ['No Frills','Costco','Walmart','Farm Boy','Other'];
+let stores = [...DEFAULT_STORES];
+const STORE_SETTINGS_ID = '__store_settings__';
+let storeSettingsLoaded = false;
 const $ = id => document.getElementById(id);
 let items = [];
 let unsubscribeItems = null;
@@ -51,6 +55,8 @@ let busy = false;
 function status(message){ $('status').textContent = message; }
 function sortedForStore(store){ return items.filter(i=>i.store===store).sort((a,b)=>Number(a.done)-Number(b.done)||(a.done?(Number(b.doneAt||0)-Number(a.doneAt||0)):(Number(a.createdAt||0)-Number(b.createdAt||0)))); }
 function render(){
+  const select=$('store'); const selected=select.value; select.replaceChildren(); stores.forEach(store=>{const option=document.createElement('option');option.value=store;option.textContent=store;select.append(option);}); select.value=stores.includes(selected)?selected:(stores[0]||'Other');
+  renderStoreManager();
   const groups=$('groups'); groups.replaceChildren(); let openCount=0, doneCount=0;
   stores.forEach(store=>{
     const listItems=sortedForStore(store); if(!listItems.length)return;
@@ -73,6 +79,25 @@ function render(){
   $('count').textContent=items.length?openCount+' to get'+(doneCount?' · '+doneCount+' checked':''):'';
   $('clear').hidden=doneCount===0;
 }
+function renderStoreManager(){
+  const list=$('storeList'); if(!list)return; list.replaceChildren();
+  stores.forEach((store,index)=>{const row=document.createElement('div');row.className='store-row';const name=document.createElement('span');name.textContent=store;row.append(name);
+    const rename=document.createElement('button');rename.type='button';rename.textContent='Rename';rename.addEventListener('click',async()=>{const next=prompt('Rename “'+store+'” to:',store);if(next===null)return;const clean=next.trim();if(!clean){alert('Store name cannot be empty.');return;}if(stores.some((s,i)=>i!==index&&s.toLowerCase()===clean.toLowerCase())){alert('That store already exists.');return;}await renameStore(store,clean);});row.append(rename);
+    if(store!=='Other' && stores.length>1){const remove=document.createElement('button');remove.type='button';remove.className='danger';remove.textContent='Remove';remove.addEventListener('click',async()=>{if(!confirm('Remove “'+store+'”? Existing items in this store will move to Other.'))return;await removeStore(store);});row.append(remove);}list.append(row);
+  });
+}
+async function saveStores(next){
+  if(!currentUser)throw new Error('Sign in first.');
+  const clean=[...new Set(next.map(s=>s.trim()).filter(Boolean))];if(!clean.includes('Other'))clean.push('Other');
+  await importStoreSettings(clean); stores=clean;storeSettingsLoaded=true;render();status('Stores saved and shared.');
+}
+async function importStoreSettings(names){ await setDoc(doc(db,'items',STORE_SETTINGS_ID),{kind:'storeSettings',stores:names,updatedAt:Date.now()}); }
+async function renameStore(oldName,newName){
+  try{status('Renaming store…');const batch=writeBatch(db);items.filter(i=>i.store===oldName).forEach(i=>batch.update(doc(db,'items',i.id),{store:newName,updatedAt:Date.now()}));batch.set(doc(db,'items',STORE_SETTINGS_ID),{kind:'storeSettings',stores:stores.map(s=>s===oldName?newName:s),updatedAt:Date.now()});await batch.commit();stores=stores.map(s=>s===oldName?newName:s);render();status('Store renamed and shared.');}catch(e){status('Could not rename store: '+friendlyError(e));}
+}
+async function removeStore(store){
+  try{status('Removing store…');const batch=writeBatch(db);items.filter(i=>i.store===store).forEach(i=>batch.update(doc(db,'items',i.id),{store:'Other',updatedAt:Date.now()}));batch.set(doc(db,'items',STORE_SETTINGS_ID),{kind:'storeSettings',stores:stores.filter(s=>s!==store),updatedAt:Date.now()});await batch.commit();stores=stores.filter(s=>s!==store);if(!stores.includes('Other'))stores.push('Other');render();status('Store removed; its items moved to Other.');}catch(e){status('Could not remove store: '+friendlyError(e));}
+}
 function friendlyError(e){
   if(e?.code==='permission-denied')return 'Access denied. Check that this Google email is listed in your Firestore rules and that the rules are published.';
   if(e?.code==='unavailable')return 'Firebase is temporarily unavailable. Check your internet connection.';
@@ -94,6 +119,7 @@ $('add').addEventListener('submit',async e=>{
   catch(e){status('Could not add item: '+friendlyError(e));}
   finally{busy=false;button.disabled=false;}
 });
+$('addStore').addEventListener('submit',async e=>{e.preventDefault();const input=$('newStore');const name=input.value.trim();if(!name)return;if(stores.some(s=>s.toLowerCase()===name.toLowerCase())){alert('That store already exists.');return;}try{await saveStores([...stores,name]);input.value='';}catch(err){status('Could not add store: '+friendlyError(err));}});
 $('clear').addEventListener('click',async()=>{
   const checked=items.filter(i=>i.done); if(!checked.length)return;
   if(!confirm('Delete all '+checked.length+' checked item(s)? Choose Cancel to keep them crossed out at the bottom.'))return;
@@ -108,7 +134,7 @@ onAuthStateChanged(auth,user=>{
   if(!user.emailVerified){status('This account email is not verified.');return;}
   status('Connecting to shared list…');
   unsubscribeItems=onSnapshot(query(collection(db,'items')),
-    snap=>{items=snap.docs.map(d=>({id:d.id,...d.data()})).filter(i=>typeof i.text==='string').map(i=>({...i,store:stores.includes(i.store)?i.store:'Other',done:!!i.done}));render();status('Synced · changes are shared.');},
+    snap=>{const docs=snap.docs.map(d=>({id:d.id,...d.data()}));const settings=docs.find(d=>d.id===STORE_SETTINGS_ID&&d.kind==='storeSettings');if(settings&&Array.isArray(settings.stores)){stores=[...new Set(settings.stores.filter(x=>typeof x==='string'&&x.trim()))];if(!stores.includes('Other'))stores.push('Other');storeSettingsLoaded=true;}else if(!storeSettingsLoaded){stores=[...DEFAULT_STORES];storeSettingsLoaded=true;setDoc(doc(db,'items',STORE_SETTINGS_ID),{kind:'storeSettings',stores:DEFAULT_STORES,updatedAt:Date.now()}).catch(e=>status('Could not initialize stores: '+friendlyError(e)));}items=docs.filter(i=>i.id!==STORE_SETTINGS_ID&&typeof i.text==='string').map(i=>({...i,store:stores.includes(i.store)?i.store:'Other',done:!!i.done}));render();status('Synced · changes are shared.');},
     error=>{status('Could not load shared list: '+friendlyError(error));}
   );
 });

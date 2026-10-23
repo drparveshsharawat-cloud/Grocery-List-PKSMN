@@ -44,7 +44,7 @@ const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 const DEFAULT_STORES = ['No Frills','Costco','Walmart','Farm Boy','Other'];
 let stores = [...DEFAULT_STORES];
-const STORE_SETTINGS_ID = '__store_settings__';
+const STORE_SETTINGS_ID = 'store_settings';
 let storeSettingsLoaded = false;
 const $ = id => document.getElementById(id);
 let items = [];

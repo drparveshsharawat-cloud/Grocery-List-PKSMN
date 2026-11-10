@@ -188,9 +188,9 @@ async function createInvite(email) {
   const token = randomToken();
   await setDoc(doc(db, ...familyPath('invites', token)), {
     email:invitedEmail, status:'pending', createdBy:user.uid,
-    createdAt:Date.now(), expiresAt:Date.now() + 7*24*60*60*1000
+    createdAt:Date.now(), expiresAt:new Date(Date.now() + 7*24*60*60*1000)
   });
-  const url = new URL(location.href); url.search = ''; url.hash = ''; url.searchParams.set('invite', token);
+  const url = new URL(location.href); url.search = ''; url.hash = ''; url.searchParams.set('invite', token); url.searchParams.set('family', familyId);
   await navigator.clipboard.writeText(url.toString());
   return url.toString();
 }
@@ -200,19 +200,19 @@ async function redeemInvite(token) {
   const inviteSnap = await getDoc(inviteRef);
   if (!inviteSnap.exists()) throw new Error('This invitation is invalid or has expired.');
   const data = inviteSnap.data();
-  if (data.status !== 'pending' || cleanEmail(data.email) !== cleanEmail(user.email) || data.expiresAt < Date.now()) {
+  if (data.status !== 'pending' || cleanEmail(data.email) !== cleanEmail(user.email) || data.expiresAt.toMillis() < Date.now()) {
     throw new Error('This invitation is not valid for the signed-in email address, or it has expired.');
   }
   const fid = familyIdFromInvite(token);
   const familySnap = await getDoc(doc(db,'families',fid));
   if (!familySnap.exists()) throw new Error('The family no longer exists.');
   const batch = writeBatch(db);
-  batch.set(doc(db,'families',fid,'members',user.uid), {uid:user.uid,email:cleanEmail(user.email),role:'member',joinedAt:Date.now()});
+  batch.set(doc(db,'families',fid,'members',user.uid), {uid:user.uid,email:cleanEmail(user.email),role:'member',joinedAt:Date.now(),inviteToken:token});
   batch.set(doc(db,'users',user.uid,'families',fid), {familyId:fid,familyName:familySnap.data().name,role:'member',joinedAt:Date.now()});
   batch.update(inviteRef, {status:'accepted',acceptedBy:user.uid,acceptedAt:Date.now()});
   await batch.commit();
   familyId = fid; family = {id:fid,...familySnap.data()}; listenToFamily();
-  localStorage.removeItem('pendingFamilyInvite');
+  localStorage.removeItem('pendingFamilyInvite'); localStorage.removeItem('pendingFamilyInviteMeta');
 }
 function familyIdFromInvite(token) {
   // The token is stored with its family ID after resolving it from the invitation link payload.

@@ -17,7 +17,8 @@ service cloud.firestore {
       allow create: if signedIn() && request.resource.data.ownerUid == request.auth.uid;
       allow get: if familyMember(familyId) || familyOwner(familyId);
       allow list: if false;
-      allow update, delete: if familyOwner(familyId);
+      allow update: if familyOwner(familyId) && request.resource.data.ownerUid == resource.data.ownerUid;
+      allow delete: if familyOwner(familyId);
 
       match /members/{uid} {
         allow get, list: if familyMember(familyId) || familyOwner(familyId);

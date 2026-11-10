@@ -8,14 +8,14 @@ import {
   query, where, writeBatch, setDoc, getDoc, getDocs, runTransaction, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 
-// Existing Firebase project. Keep this configuration private to this app; it is not a server secret.
+// Test Firebase project. Client configuration is public; access is protected by Authentication and Firestore rules.
 const firebaseConfig = {
-  apiKey: "AIzaSyD5HrofJvPdHH_69JUpI43xJEJeh93iOpo",
-  authDomain: "grocery-list-pksmn.firebaseapp.com",
-  projectId: "grocery-list-pksmn",
-  storageBucket: "grocery-list-pksmn.firebasestorage.app",
-  messagingSenderId: "754537311698",
-  appId: "1:754537311698:web:a2db5c77e97cb97910ac0b"
+  apiKey: "AIzaSyAXUN_8dzwaaDaRALpS-rRzGqj2kKYUb40",
+  authDomain: "grocery-list-pksmn-test.firebaseapp.com",
+  projectId: "grocery-list-pksmn-test",
+  storageBucket: "grocery-list-pksmn-test.firebasestorage.app",
+  messagingSenderId: "530437162373",
+  appId: "1:530437162373:web:00b19182ec6075a8c9f0ec"
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);

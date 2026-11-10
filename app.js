@@ -228,6 +228,7 @@ async function handleInviteLanding() {
     // Invite URL includes family ID as a non-secret locator; token remains the authorization secret.
     const fid = new URLSearchParams(location.search).get('family');
     if (fid) localStorage.setItem('pendingFamilyInviteMeta', JSON.stringify({token,familyId:fid}));
+    $('joinBox').classList.remove('hidden');
     history.replaceState({}, '', location.pathname);
   }
 }
@@ -307,6 +308,7 @@ onAuthStateChanged(auth, async nextUser => {
   }
   const token = localStorage.getItem('pendingFamilyInvite');
   if (token) {
+    $('joinBox').classList.remove('hidden');
     show('familyPanel'); hide('appPanel');
     $('joinInvite').disabled = false;
     message('familyStatus','Invitation received for '+user.email+'. Join only if this is the email address the invitation was sent to.');

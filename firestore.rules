@@ -1,19 +1,16 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function signedIn() { return request.auth != null && request.auth.token.email_verified == true; }
+    function signedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
     function familyMember(familyId) {
-      return signedIn() && exists(/databases/$(database)/documents/families/$(familyId)/members/$(request.auth.uid));
+      return signedIn() &&
+        exists(/databases/$(database)/documents/families/$(familyId)/members/$(request.auth.uid));
     }
     function familyOwner(familyId) {
       return signedIn() &&
         get(/databases/$(database)/documents/families/$(familyId)).data.ownerUid == request.auth.uid;
-    }
-    function invitedTo(familyId, token) {
-      let invite = get(/databases/$(database)/documents/families/$(familyId)/invites/$(token)).data;
-      return signedIn() && invite.status == 'pending' &&
-        invite.email == request.auth.token.email.lower() &&
-        invite.expiresAt > request.time.toMillis();
     }
 
     match /families/{familyId} {
@@ -25,25 +22,36 @@ service cloud.firestore {
       match /members/{uid} {
         allow get, list: if familyMember(familyId) || familyOwner(familyId);
         allow create: if signedIn() && (
-          (uid == request.auth.uid && getAfter(/databases/$(database)/documents/families/$(familyId)).data.ownerUid == request.auth.uid) ||
-          (uid == request.auth.uid && existsAfter(/databases/$(database)/documents/families/$(familyId)/invites/$(request.resource.data.inviteToken)))
+          (uid == request.auth.uid &&
+            getAfter(/databases/$(database)/documents/families/$(familyId)).data.ownerUid == request.auth.uid &&
+            request.resource.data.role == 'owner') ||
+          (uid == request.auth.uid &&
+            request.resource.data.inviteToken is string &&
+            getAfter(/databases/$(database)/documents/families/$(familyId)/invites/$(request.resource.data.inviteToken)).data.status == 'accepted' &&
+            getAfter(/databases/$(database)/documents/families/$(familyId)/invites/$(request.resource.data.inviteToken)).data.acceptedBy == request.auth.uid &&
+            getAfter(/databases/$(database)/documents/families/$(familyId)/invites/$(request.resource.data.inviteToken)).data.email == request.auth.token.email.lower())
         );
         allow update, delete: if familyOwner(familyId) && uid != request.auth.uid;
       }
+
       match /items/{itemId} {
         allow read, create, update, delete: if familyMember(familyId);
       }
+
       match /settings/{settingId} {
         allow read: if familyMember(familyId);
-        allow create, update, delete: if familyOwner(familyId) || familyMember(familyId);
+        allow create, update, delete: if familyMember(familyId);
       }
+
       match /invites/{token} {
         allow get: if signedIn() && resource.data.email == request.auth.token.email.lower();
         allow list: if familyOwner(familyId);
         allow create: if familyOwner(familyId) &&
           request.resource.data.email is string &&
           request.resource.data.status == 'pending' &&
-          request.resource.data.createdBy == request.auth.uid;
+          request.resource.data.createdBy == request.auth.uid &&
+          request.resource.data.expiresAt is timestamp &&
+          request.resource.data.expiresAt > request.time;
         allow update: if signedIn() &&
           resource.data.email == request.auth.token.email.lower() &&
           resource.data.status == 'pending' &&
@@ -56,12 +64,12 @@ service cloud.firestore {
     match /users/{uid}/families/{familyId} {
       allow get, list: if signedIn() && request.auth.uid == uid;
       allow create: if signedIn() && request.auth.uid == uid &&
-        exists(/databases/$(database)/documents/families/$(familyId)/members/$(uid));
+        existsAfter(/databases/$(database)/documents/families/$(familyId)/members/$(uid));
       allow delete: if signedIn() && request.auth.uid == uid;
       allow update: if false;
     }
 
-    // Legacy shared list: temporarily retained for migration only.
+    // Legacy shared list remains temporarily available only to the existing household accounts.
     match /items/{itemId} {
       allow read, write: if signedIn() &&
         request.auth.token.email in [

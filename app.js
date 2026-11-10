@@ -136,13 +136,28 @@ function renderMembers() {
 function listenToFamily() {
   stopFamilyListeners();
   if (!familyId) return;
-  stopFamily = onSnapshot(familyRef(), snap => { family = snap.exists() ? {id:snap.id,...snap.data()} : null; $('familyName').textContent = family?.name || 'Family'; renderMembers(); }, e => message('appStatus', friendly(e), true));
+  stopFamily = onSnapshot(familyRef(), snap => {
+    family = snap.exists() ? {id:snap.id,...snap.data()} : null;
+    $('familyName').textContent = family?.name || 'Family';
+    // Pending invitations contain private email addresses, so only the owner loads them.
+    if (family?.ownerUid === user?.uid) {
+      if (!stopInvites) {
+        stopInvites = onSnapshot(collection(db, ...familyPath('invites')), inviteSnap => {
+          invites = inviteSnap.docs.map(d=>({id:d.id,...d.data()}));
+          renderMembers();
+        }, e => message('appStatus', friendly(e), true));
+      }
+    } else {
+      if (stopInvites) { stopInvites(); stopInvites = null; }
+      invites = [];
+    }
+    renderMembers();
+  }, e => message('appStatus', friendly(e), true));
   stopItems = onSnapshot(query(itemsRef()), snap => {
     items = snap.docs.map(d => ({id:d.id,...d.data()})).filter(x => typeof x.text === 'string');
     renderItems(); message('appStatus', 'Synced · this family’s list is private.');
   }, e => message('appStatus', friendly(e), true));
   stopMembers = onSnapshot(collection(db, ...familyPath('members')), snap => { members = snap.docs.map(d=>({uid:d.id,...d.data()})); renderMembers(); });
-  stopInvites = onSnapshot(collection(db, ...familyPath('invites')), snap => { invites = snap.docs.map(d=>({id:d.id,...d.data()})); renderMembers(); });
   show('appPanel'); hide('familyPanel'); hide('loginPanel');
 }
 async function chooseFamily() {

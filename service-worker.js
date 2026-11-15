@@ -2,6 +2,7 @@ const CACHE_NAME = 'family-grocery-list-v1';
 const APP_SHELL = [
   './',
   './index.html',
+  './app.js',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
